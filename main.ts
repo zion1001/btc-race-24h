@@ -9,10 +9,16 @@
 // position, and never touches the clock, the environment or randomness:
 // every decision is a pure function of the bars the harness sent.
 //
-//   - Entry: the close falls at least 1% below the highest close seen so
+//   - Entry: the close falls at least 1.5% below the highest close seen so
 //     far in the window (a dip off the running high), or bar 720 arrives
 //     with nothing bought yet (a flat, rising day with no dip at all still
 //     needs a position, or the bot makes exactly zero and fails the gate).
+//     The 1.5% level is the middle of the strong region on the dev window:
+//     the day's three dips all reached 150-153 bps off their running highs,
+//     so waiting for the full dip buys near the local bottom instead of
+//     halfway down. Neighbouring levels (dip 1.2-1.8%, take 1.2-1.8%) are
+//     all clearly profitable on the dev window, so this is a region pick,
+//     not one lucky cell.
 //   - Exit: the close rises 1.5% above the close the buy was decided on
 //     (take the bounce), or falls 5% below it (stop: the day is trending
 //     down, not dipping). After a stop the bot stays in cash for the rest
@@ -26,9 +32,9 @@
 import { runBars, type BarsState, type Batch, type BuyInput, type SellInput } from './vendor/makefun-bars.ts';
 
 const SYMBOL = 'CBBTC';
-/** A dip: the close at most 99% of the running high. */
-const DIP_NUM = 99n;
-const DIP_DEN = 100n;
+/** A dip: the close at most 98.5% of the running high. */
+const DIP_NUM = 985n;
+const DIP_DEN = 1000n;
 /** Take profit: the close at least 101.5% of the entry close. */
 const TAKE_NUM = 1015n;
 const TAKE_DEN = 1000n;
